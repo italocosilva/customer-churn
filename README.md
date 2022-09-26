@@ -37,7 +37,7 @@ python -m ipykernel install --user --name=customer-churn
 
 ## Project Motivation<a name="motivation"></a>
 
-TBD
+TBD.
 
 ## File Descriptions <a name="files"></a>
 
