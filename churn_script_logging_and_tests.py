@@ -60,10 +60,10 @@ def test_eda(perform_eda):
         for img in imgs_name:
             if not os.path.isfile(f'./images/eda/{img}.png'):
                 logging.error(
-                    f"Testing test_eda: file ./images/eda/{img}.png doesn't exist")
+                    f"Testing perform_eda: file ./images/eda/{img}.png doesn't exist")
             assert os.path.isfile(f'./images/eda/{img}.png')
 
-        logging.info("Testing test_eda: SUCCESS")
+        logging.info("Testing perform_eda: SUCCESS")
     except AssertionError as err:
         raise err
 
@@ -102,21 +102,100 @@ def test_encoder_helper(encoder_helper):
         raise err
 
 
+@pytest.fixture(scope="module")
+def perform_feature_engineering():
+    return cls.perform_feature_engineering
+
+
 def test_perform_feature_engineering(perform_feature_engineering):
     '''
     test perform_feature_engineering
     '''
+
+    # Load data
+    df = cls.import_data("./data/bank_data.csv").head(100)
+
+    # Encoding categories
+    category_lst = [
+        "Gender",
+        "Education_Level",
+        "Marital_Status",
+        "Income_Category",
+        "Card_Category"
+    ]
+    cls.perform_eda(df)
+    df = cls.encoder_helper(df, category_lst)
+
+    X_train, X_test, y_train, y_test = perform_feature_engineering(df)
+
+    try:
+        assert X_train.shape[0] == 70
+        assert y_train.shape[0] == 70
+        assert X_test.shape[0] == 30
+        assert y_test.shape[0] == 30
+        logging.info("Testing perform_feature_engineering: SUCCESS")
+    except AssertionError as err:
+        logging.error("Testing perform_feature_engineering: Wrong split size")
+        raise err
+
+    try:
+        assert X_train.shape[1] == 19
+        assert X_test.shape[1] == 19
+    except AssertionError as err:
+        logging.error(
+            "Testing perform_feature_engineering: Wrong number of features")
+        raise err
+
+
+@pytest.fixture(scope="module")
+def train_models():
+    return cls.train_models
 
 
 def test_train_models(train_models):
     '''
     test train_models
     '''
+    imgs_name = [
+        'clf-rep-rf',
+        'clf-rep-lr',
+        'feat-imp-rf',
+    ]
+
+    try:
+        df = cls.import_data("./data/bank_data.csv")
+        cls.perform_eda(df)
+
+        # Encoding categories
+        category_lst = [
+            "Gender",
+            "Education_Level",
+            "Marital_Status",
+            "Income_Category",
+            "Card_Category"
+        ]
+        df = cls.encoder_helper(df, category_lst)
+
+        X_train, X_test, y_train, y_test = cls.perform_feature_engineering(df)
+
+        train_models(X_train, X_test, y_train, y_test)
+
+        for img in imgs_name:
+            if not os.path.isfile(f'./images/results/{img}.png'):
+                logging.error(
+                    f"Testing train_models: file ./images/results/{img}.png doesn't exist")
+            assert os.path.isfile(f'./images/results/{img}.png')
+
+        logging.info("Testing train_models: SUCCESS")
+    except AssertionError as err:
+        raise err
 
 
 if __name__ == "__main__":
     pytest.main([
         'churn_script_logging_and_tests.py::test_import',
         'churn_script_logging_and_tests.py::test_eda',
-                'churn_script_logging_and_tests.py::test_encoder_helper'
-                ])
+        'churn_script_logging_and_tests.py::test_encoder_helper',
+        'churn_script_logging_and_tests.py::test_perform_feature_engineering',
+        'churn_script_logging_and_tests.py::test_train_models',
+    ])
