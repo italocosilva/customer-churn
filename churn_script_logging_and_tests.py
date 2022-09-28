@@ -1,8 +1,15 @@
+'''
+Test script for churn_library.py
+
+Author: Italo
+Date: September 27, 2022
+'''
+
 import os
 import logging
-import churn_library as cls
 import pytest
 import pandas as pd
+import churn_library as cls
 
 logging.basicConfig(
     filename='./logs/churn_library.log',
@@ -13,6 +20,9 @@ logging.basicConfig(
 
 @pytest.fixture(scope="module")
 def import_data():
+    '''
+    fixture for import_data function
+    '''
     return cls.import_data
 
 
@@ -38,6 +48,9 @@ def test_import(import_data):
 
 @pytest.fixture(scope="module")
 def perform_eda():
+    '''
+    fixture for perform_eda function
+    '''
     return cls.perform_eda
 
 
@@ -60,7 +73,7 @@ def test_eda(perform_eda):
         for img in imgs_name:
             if not os.path.isfile(f'./images/eda/{img}.png'):
                 logging.error(
-                    f"Testing perform_eda: file ./images/eda/{img}.png doesn't exist")
+                    "Testing perform_eda: file ./images/eda/%s.png doesn't exist", img)
             assert os.path.isfile(f'./images/eda/{img}.png')
 
         logging.info("Testing perform_eda: SUCCESS")
@@ -70,6 +83,9 @@ def test_eda(perform_eda):
 
 @pytest.fixture(scope="module")
 def encoder_helper():
+    '''
+    fixture for encoder_helper function
+    '''
     return cls.encoder_helper
 
 
@@ -104,6 +120,9 @@ def test_encoder_helper(encoder_helper):
 
 @pytest.fixture(scope="module")
 def perform_feature_engineering():
+    '''
+    fixture for perform_feature_engineering function
+    '''
     return cls.perform_feature_engineering
 
 
@@ -112,10 +131,8 @@ def test_perform_feature_engineering(perform_feature_engineering):
     test perform_feature_engineering
     '''
 
-    # Load data
     df = cls.import_data("./data/bank_data.csv").head(100)
 
-    # Encoding categories
     category_lst = [
         "Gender",
         "Education_Level",
@@ -149,6 +166,9 @@ def test_perform_feature_engineering(perform_feature_engineering):
 
 @pytest.fixture(scope="module")
 def train_models():
+    '''
+    fixture for train_models function
+    '''
     return cls.train_models
 
 
@@ -159,14 +179,14 @@ def test_train_models(train_models):
     imgs_name = [
         'clf-rep-rf',
         'clf-rep-lr',
-        'feat-imp-rf',
+        'feat-imp',
+        'roc',
     ]
 
     try:
         df = cls.import_data("./data/bank_data.csv")
         cls.perform_eda(df)
 
-        # Encoding categories
         category_lst = [
             "Gender",
             "Education_Level",
@@ -183,7 +203,7 @@ def test_train_models(train_models):
         for img in imgs_name:
             if not os.path.isfile(f'./images/results/{img}.png'):
                 logging.error(
-                    f"Testing train_models: file ./images/results/{img}.png doesn't exist")
+                    "Testing train_models: file ./images/results/%s.png doesn't exist", img)
             assert os.path.isfile(f'./images/results/{img}.png')
 
         logging.info("Testing train_models: SUCCESS")

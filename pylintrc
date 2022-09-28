@@ -1,0 +1,5 @@
+[FORMAT]
+good-names = df, X_train, X_test, X_data, ax, X, y
+
+[MESSAGES CONTROL]
+disable = W0621, R0913
