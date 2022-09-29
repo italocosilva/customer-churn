@@ -2,6 +2,10 @@
 
 - Project **Predict Customer Churn** of ML DevOps Engineer Nanodegree Udacity
 
+## Summary
+
+This project aims to predict the probability of churn from credit card customers. To solve this we will use a supervised model, specifically a classification model, that tries to separate customers in two groups, will churn and will not churn.
+
 ### Table of Contents
 
 1. [Installation](#installation)

@@ -179,8 +179,10 @@ def test_train_models(train_models):
     imgs_name = [
         'clf-rep-rf',
         'clf-rep-lr',
-        'feat-imp',
-        'roc',
+        'feat-imp_LogisticRegression',
+        'feat-imp_RandomForestClassifier',
+        'roc_LogisticRegression',
+        'roc_RandomForestClassifier',
     ]
 
     try:

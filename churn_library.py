@@ -205,10 +205,13 @@ def feature_importance_plot(model, X_test, y_test, output_pth):
     plt.figure(figsize=(15, 8))
     ax = plt.gca()
     RocCurveDisplay.from_estimator(model, X_test, y_test, ax=ax, alpha=0.8)
-    plt.savefig(output_pth + "roc.png")
+    plt.savefig(output_pth + "roc_" + type(model).__name__ + ".png")
 
     # Calculate feature importances
-    importances = model.feature_importances_
+    try:
+        importances = model.feature_importances_
+    except AttributeError:
+        importances = abs(model.coef_)[0]
     # Sort feature importances in descending order
     indices = np.argsort(importances)[::-1]
 
@@ -227,7 +230,7 @@ def feature_importance_plot(model, X_test, y_test, output_pth):
 
     # Add feature names as x-axis labels and save fig
     plt.xticks(range(X_test.shape[1]), names, rotation=90)
-    plt.savefig(output_pth + "feat-imp.png")
+    plt.savefig(output_pth + "feat-imp_" + type(model).__name__ + ".png")
 
 
 def train_models(X_train, X_test, y_train, y_test):
@@ -281,6 +284,11 @@ def train_models(X_train, X_test, y_train, y_test):
 
     # Save ROC and Feature Importance to images folder
     feature_importance_plot(cv_rfc.best_estimator_,
+                            X_test,
+                            y_test,
+                            "./images/results/")
+
+    feature_importance_plot(lrc,
                             X_test,
                             y_test,
                             "./images/results/")
